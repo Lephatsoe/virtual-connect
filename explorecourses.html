@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore Courses | Limkokwing Lesotho</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #0a0a0a;
+            color: white;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            background: linear-gradient(to right, #000000, #111111);
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            background: linear-gradient(to right, #ffcc00, white);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #b0b0b0;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faculty-card {
+            background-color: #111111;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(255, 204, 0, 0.1);
+            border-left: 4px solid #ffcc00;
+        }
+
+        .faculty-header {
+            background-color: #333;
+            padding: 20px;
+            color: #ffcc00;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .courses-list {
+            padding: 20px;
+        }
+
+        .course-item {
+            padding: 15px;
+            border-bottom: 1px solid #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .course-item:last-child {
+            border-bottom: none;
+        }
+
+        .course-name {
+            font-weight: 500;
+        }
+
+        .course-type {
+            background-color: #ffcc00;
+            color: #000;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: #ffcc00;
+            text-decoration: none;
+            margin-top: 30px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: #e6b800;
+            text-decoration: underline;
+        }
+
+        footer {
+            background-color: #000;
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+            color: #b0b0b0;
+        }
+
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.9);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar a {
+            color: white;
+            font-size: 18px;
+            margin: 0 15px;
+            transition: color 0.3s;
+            text-decoration: none;
+        }
+
+        .navbar a:hover {
+            color: #ffcc00;
+        }
+
+        .faculty-img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <h1>Explore Our Courses</h1>
+        <p class="subtitle">Discover all programs offered at Limkokwing University Lesotho, organized by faculty</p>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+
+        <!-- Faculty of Design Innovation -->
+        <div class="faculty-card">
+            <img src="design_innovation.jpg" alt="Design Innovation" class="faculty-img">
+            <div class="faculty-header">Faculty of Design Innovation</div>
+            <div class="courses-list">
+                <div class="course-item"><span class="course-name">Diploma in Creative Advertising</span><span class="course-type">Diploma</span></div>
+                <div class="course-item"><span class="course-name">Diploma in Graphic Design</span><span class="course-type">Diploma</span></div>
+                <div class="course-item"><span class="course-name">Diploma in Fashion and Apparel Design</span><span class="course-type">Diploma</span></div>
+            </div>
+        </div>
+
+        <!-- Faculty of Communication, Media, and Broadcasting -->
+        <div class="faculty-card">
+            <img src="media_broadcasting.jpg" alt="Media and Broadcasting" class="faculty-img">
+            <div class="faculty-header">Faculty of Communication, Media, and Broadcasting</div>
+            <div class="courses-list">
+                <div class="course-item"><span class="course-name">Degree in Professional Communication</span><span class="course-type">Bachelor's</span></div>
+                <div class="course-item"><span class="course-name">Degree in Broadcasting & Journalism</span><span class="course-type">Bachelor's</span></div>
+                <div class="course-item"><span class="course-name">Diploma in Television and Film Production</span><span class="course-type">Diploma</span></div>
+                <div class="course-item"><span class="course-name">Diploma in Broadcasting (Radio and TV)</span><span class="course-type">Diploma</span></div>
+                <div class="course-item"><span class="course-name">Diploma in Public Relations</span><span class="course-type">Diploma</span></div>
+                <div class="course-item"><span class="course-name">Diploma in Journalism and Media</span><span class="course-type">Diploma</span></div>
+            </div>
+        </div>
+
+        <!-- Faculty of Architecture and the Built Environment -->
+        <div class="faculty-card">
+            <img src="architecture_built.jpg" alt="Architecture and Built Environment" class="faculty-img">
+            <div class="faculty-header">Faculty of Architecture and the Built Environment</div>
+            <div class="courses-list">
+                <div class="course-item"><span class="course-name">Diploma in Architectural Technology</span><span class="course-type">Diploma</span></div>
+            </div>
+        </div>
+
+        <!-- Faculty of Business and Globalization -->
+        <div class="faculty-card">
+            <img src="business_globalization.jpg" alt="Business and Globalization" class="faculty-img">
+            <div class="faculty-header">Faculty of Business and Globalization</div>
+            <div class="courses-list">
+                <div class="course-item"><span class="course-name">Degree in International Business</span><span class="course-type">Bachelor's</span></div>
+                <div class="course-item"><span class="course-name">Degree in Entrepreneurship</span><span class="course-type">Bachelor's</span></div>
+                <div class="course-item"><span class="course-name">Degree in Human Resource Management</span><span class="course-type">Bachelor's</span></div>
+                <div class="course-item"><span class="course-name">Diploma in Business Management</span><span class="course-type">Diploma</span></div>
+                <div class="course-item"><span class="course-name">Diploma in Retail Management</span><span class="course-type">Diploma</span></div>
+                <div class="course-item"><span class="course-name">Diploma in Marketing</span><span class="course-type">Diploma</span></div>
+            </div>
+        </div>
+
+        <!-- Faculty of Creativity in Tourism and Hospitality -->
+        <div class="faculty-card">
+            <img src="tourism_hospitality.jpg" alt="Tourism and Hospitality" class="faculty-img">
+            <div class="faculty-header">Faculty of Creativity in Tourism and Hospitality</div>
+            <div class="courses-list">
+                <div class="course-item"><span class="course-name">Degree in Tourism Management</span><span class="course-type">Bachelor's</span></div>
+                <div class="course-item"><span class="course-name">Diploma in Tourism Management</span><span class="course-type">Diploma</span></div>
+                <div class="course-item"><span class="course-name">Diploma in Hotel Management</span><span class="course-type">Diploma</span></div>
+                <div class="course-item"><span class="course-name">Diploma in Events Management</span><span class="course-type">Diploma</span></div>
+            </div>
+        </div>
+
+        <!-- Faculty of Information and Communication Technology -->
+        <div class="faculty-card">
+            <img src="ict_faculty.jpg" alt="Information and Communication Technology" class="faculty-img">
+            <div class="faculty-header">Faculty of Information and Communication Technology</div>
+            <div class="courses-list">
+                <div class="course-item"><span class="course-name">Degree in Software Engineering with Multimedia</span><span class="course-type">Bachelor's</span></div>
+                <div class="course-item"><span class="course-name">Degree in Business Information Technology</span><span class="course-type">Bachelor's</span></div>
+                <div class="course-item"><span class="course-name">Degree in Information Technology</span><span class="course-type">Bachelor's</span></div>
+                <div class="course-item"><span class="course-name">Diploma in Multimedia and Software Engineering</span><span class="course-type">Diploma</span></div>
+                <div class="course-item"><span class="course-name">Diploma in Business Information Technology</span><span class="course-type">Diploma</span></div>
+                <div class="course-item"><span class="course-name">Diploma in Information Technology</span><span class="course-type">Diploma</span></div>
+            </div>
+        </div>
+
+        <a href="projectx1.html" class="back-link">← Back to Home</a>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2025 Limkokwing University Lesotho. All rights reserved.</p>
+    </footer>
+</body>
+</html>

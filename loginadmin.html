@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limkokwing Admin Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #121212;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: radial-gradient(circle at center, #333 0%, #121212 100%);
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            background-color: #222;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(255, 204, 0, 0.3);
+            overflow: hidden;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-header {
+            background-color: #000;
+            padding: 25px;
+            text-align: center;
+            border-bottom: 3px solid #ffcc00;
+        }
+
+        .login-header h1 {
+            color: #ffcc00;
+            font-size: 28px;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+
+        .login-header p {
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        .login-form {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ffcc00;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px;
+            background-color: #333;
+            border: 2px solid #444;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #ffcc00;
+            box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.2);
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 15px;
+            background-color: #ffcc00;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .login-button:hover {
+            background-color: #e6b800;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 204, 0, 0.4);
+        }
+
+        .back-button {
+            width: 100%;
+            padding: 12px;
+            background-color: transparent;
+            color: #ffcc00;
+            border: 2px solid #ffcc00;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .back-button:hover {
+            background-color: rgba(255, 204, 0, 0.1);
+        }
+
+        .login-footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+            font-size: 12px;
+            border-top: 1px solid #333;
+        }
+
+        .error-message {
+            color: #ff3333;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .university-badge {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 15px;
+            background-color: #ffcc00;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: #000;
+            font-size: 24px;
+            box-shadow: 0 0 0 5px rgba(255, 204, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <div class="university-badge">LU</div>
+            <h1>ADMIN PORTAL</h1>
+            <p>Limkokwing University of Creative Technology</p>
+        </div>
+
+        <form id="adminLoginForm" class="login-form">
+            <div class="form-group">
+                <label for="employeeNumber">EMPLOYEE NUMBER</label>
+                <input type="text" id="employeeNumber" name="employeeNumber" placeholder="Enter your employee number" required>
+                <div class="error-message" id="employeeNumberError"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="employeeName">FULL NAME</label>
+                <input type="text" id="employeeName" name="employeeName" placeholder="Enter your full name" required>
+                <div class="error-message" id="employeeNameError"></div>
+            </div>
+
+            <button type="submit" class="login-button">ACCESS PORTAL</button>
+            <button type="button" class="back-button" onclick="window.location.href='projectx1.html'">BACK TO MAIN SITE</button>
+        </form>
+
+        <div class="login-footer">
+            <p>Restricted access to authorized personnel only</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('adminLoginForm');
+            const employeeNumberError = document.getElementById('employeeNumberError');
+            const employeeNameError = document.getElementById('employeeNameError');
+
+            // Check if redirected from unauthorized access
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('redirect')) {
+                showError(employeeNumberError, 'Please login to access admin features');
+            }
+
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Reset error messages
+                hideErrors();
+                
+                // Get form values
+                const employeeNumber = document.getElementById('employeeNumber').value.trim();
+                const employeeName = document.getElementById('employeeName').value.trim();
+                
+                // Validation
+                if (!employeeNumber) {
+                    return showError(employeeNumberError, 'Employee number is required');
+                }
+                
+                if (!employeeName) {
+                    return showError(employeeNameError, 'Full name is required');
+                }
+                
+                // Show loading state
+                const submitButton = loginForm.querySelector('button[type="submit"]');
+                const originalText = submitButton.textContent;
+                submitButton.disabled = true;
+                submitButton.textContent = 'VERIFYING...';
+                
+                try {
+                    // Verify credentials against database
+                    const response = await fetch('/api/verify-employee', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            employeeNumber: employeeNumber,
+                            employeeName: employeeName
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        // Store verification in session
+                        sessionStorage.setItem('adminVerified', 'true');
+                        sessionStorage.setItem('employeeData', JSON.stringify(data.employee));
+                        
+                        // Redirect to admin dashboard or back to projectx1
+                        const redirectUrl = urlParams.get('redirect') || 'admin-dashboard.html';
+                        window.location.href = redirectUrl;
+                    } else {
+                        showError(employeeNumberError, 'Invalid credentials');
+                        showError(employeeNameError, 'Not found in employee database');
+                    }
+                } catch (error) {
+                    console.error('Verification error:', error);
+                    showError(employeeNumberError, 'Connection error - please try again');
+                } finally {
+                    submitButton.disabled = false;
+                    submitButton.textContent = originalText;
+                }
+            });
+            
+            function showError(element, message) {
+                element.textContent = message;
+                element.style.display = 'block';
+            }
+            
+            function hideErrors() {
+                employeeNumberError.style.display = 'none';
+                employeeNameError.style.display = 'none';
+            }
+        });
+    </script>
+    <a href="projectx1.html" class="back-link">← Back to Home</a>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Login</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #121212, #333);
+            overflow: hidden;
+        }
+
+        .login-form {
+            background: #222;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(255, 204, 0, 0.4);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            color: white;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+
+        .login-form:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 6px 30px rgba(255, 204, 0, 0.6);
+        }
+
+        .login-form h2 {
+            margin-bottom: 20px;
+            font-size: 2rem;
+            font-weight: 600;
+            background: linear-gradient(to right, #ffcc00, #f7f700);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 8px;
+            background-color: #333;
+            color: white;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .login-form input:focus {
+            background-color: #444;
+            outline: none;
+        }
+
+        .login-form button {
+            width: 100%;
+            padding: 14px;
+            background-color: #ffcc00;
+            color: black;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s, transform 0.3s ease-in-out;
+        }
+
+        .login-form button:hover {
+            background-color: #e6b800;
+            transform: scale(1.05);
+        }
+
+        .message {
+            margin-top: 20px;
+            color: #ffcc00;
+            font-weight: bold;
+        }
+
+        .back-button {
+            margin-top: 20px;
+            padding: 12px 20px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+        .back-button:hover {
+            background-color: #444;
+        }
+
+        @media screen and (max-width: 480px) {
+            .login-form {
+                padding: 20px;
+                width: 90%;
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-form">
+        <h2>Student Login</h2>
+        <form id="loginForm">
+            <input type="text" id="student_number" name="student_number" placeholder="Student Number" required>
+            <input type="text" id="name" name="name" placeholder="Name" required>
+            <button type="submit">Login</button>
+        </form>
+        <p id="message" class="message"></p>
+        <button class="back-button" onclick="window.location.href='projectx1.html'">Back</button>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const student_number = document.getElementById('student_number').value;
+            const name = document.getElementById('name').value;
+
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: `student_number=${encodeURIComponent(student_number)}&name=${encodeURIComponent(name)}`
+                });
+
+                const result = await response.text();
+                document.getElementById('message').innerText = result;
+
+                // Redirect to ssd.html if login is successful
+                if (result.includes('successful')) {
+                    window.location.href = '/ssd.html';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('message').innerText = 'An error occurred. Please try again.';
+            }
+        });
+    </script>
+</body>
+</html>

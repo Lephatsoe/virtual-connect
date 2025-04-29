@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Limkokwing Lesotho</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #0a0a0a;
+            color: white;
+        }
+        .status-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .status-submitted { background-color: #1e40af; color: #bfdbfe; }
+        .status-under_review { background-color: #92400e; color: #fed7aa; }
+        .status-documents_verified { background-color: #065f46; color: #a7f3d0; }
+        .status-interview_scheduled { background-color: #5b21b6; color: #ddd6fe; }
+        .status-accepted { background-color: #166534; color: #bbf7d0; }
+        .status-rejected { background-color: #991b1b; color: #fecaca; }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-white bg-clip-text text-transparent">
+                Admin Dashboard
+            </h1>
+            <div>
+                <span class="mr-4">Welcome, <span id="adminName" class="text-yellow-400"></span></span>
+                <button id="logoutBtn" class="text-red-400 hover:underline">Logout</button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-blue-900/50 rounded-lg p-4">
+                <h3 class="text-gray-300">Submitted</h3>
+                <p id="submittedCount" class="text-2xl font-bold">0</p>
+            </div>
+            <div class="bg-yellow-900/50 rounded-lg p-4">
+                <h3 class="text-gray-300">Under Review</h3>
+                <p id="reviewCount" class="text-2xl font-bold">0</p>
+            </div>
+            <div class="bg-purple-900/50 rounded-lg p-4">
+                <h3 class="text-gray-300">Interview Scheduled</h3>
+                <p id="interviewCount" class="text-2xl font-bold">0</p>
+            </div>
+            <div class="bg-green-900/50 rounded-lg p-4">
+                <h3 class="text-gray-300">Accepted</h3>
+                <p id="acceptedCount" class="text-2xl font-bold">0</p>
+            </div>
+        </div>
+
+        <div class="bg-gray-900 rounded-lg p-6 mb-8">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold">Recent Applications</h2>
+                <div class="flex space-x-2">
+                    <select id="statusFilter" class="bg-gray-800 text-white px-3 py-1 rounded">
+                        <option value="">All Statuses</option>
+                        <option value="submitted">Submitted</option>
+                        <option value="under_review">Under Review</option>
+                        <option value="documents_verified">Documents Verified</option>
+                        <option value="interview_scheduled">Interview Scheduled</option>
+                        <option value="accepted">Accepted</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                    <input type="text" id="searchInput" placeholder="Search..." class="bg-gray-800 text-white px-3 py-1 rounded">
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-700">
+                    <thead>
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">ID</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Applicant</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Program</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Date</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="applicationsTable" class="divide-y divide-gray-700">
+                        <!-- Applications will be loaded here -->
+                        <tr>
+                            <td colspan="6" class="px-6 py-4 text-center">
+                                <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-yellow-400 mx-auto"></div>
+                                <p class="mt-2">Loading applications...</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-4 flex justify-between items-center">
+                <div class="text-sm text-gray-400" id="paginationInfo"></div>
+                <div class="flex space-x-2">
+                    <button id="prevPage" class="px-3 py-1 bg-gray-800 rounded disabled:opacity-50">Previous</button>
+                    <button id="nextPage" class="px-3 py-1 bg-gray-800 rounded disabled:opacity-50">Next</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Application Detail Modal -->
+        <div id="applicationModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 hidden">
+            <div class="bg-gray-900 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-semibold" id="modalTitle">Application Details</h3>
+                        <button id="closeModal" class="text-gray-400 hover:text-white">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div id="modalContent">
+                        <!-- Content will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 1;
+        const applicationsPerPage = 10;
+        let allApplications = [];
+        let filteredApplications = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Check admin session
+            if (!sessionStorage.getItem('isAdmin')) {
+                window.location.href = 'admin-login.html';
+                return;
+            }
+
+            document.getElementById('adminName').textContent = sessionStorage.getItem('adminName');
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+
+            // Load applications
+            await loadApplications();
+
+            // Setup event listeners
+            document.getElementById('statusFilter').addEventListener('change', filterApplications);
+            document.getElementById('searchInput').addEventListener('input', filterApplications);
+            document.getElementById('prevPage').addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderApplications();
+                }
+            });
+            document.getElementById('nextPage').addEventListener('click', () => {
+                if (currentPage * applicationsPerPage < filteredApplications.length) {
+                    currentPage++;
+                    renderApplications();
+                }
+            });
+            document.getElementById('closeModal').addEventListener('click', () => {
+                document.getElementById('applicationModal').classList.add('hidden');
+            });
+        });
+
+        async function loadApplications() {
+            try {
+                const response = await fetch('/api/admin/applications', {
+                    headers: {
+                        'Authorization': `Bearer ${sessionStorage.getItem('adminToken')}`
+                    }
+                });
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.message || 'Failed to load applications');
+                }
+
+                allApplications = data.applications;
+                filteredApplications = [...allApplications];
+                
+                // Update counts
+                updateCounts();
+                renderApplications();
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('applicationsTable').innerHTML = `
+                    <tr>
+                        <td colspan="6" class="px-6 py-4 text-center text-red-400">
+                            Failed to load applications: ${error.message}
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function updateCounts() {
+            document.getElementById('submittedCount').textContent = 
+                allApplications.filter(a => a.status === 'submitted').length;
+            document.getElementById('reviewCount').textContent = 
+                allApplications.filter(a => a.status === 'under_review').length;
+            document.getElementById('interviewCount').textContent = 
+                allApplications.filter(a => a.status === 'interview_scheduled').length;
+            document.getElementById('acceptedCount').textContent = 
+                allApplications.filter(a => a.status === 'accepted').length;
+        }
+
+        function filterApplications() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+            filteredApplications = allApplications.filter(application => {
+                const matchesStatus = !statusFilter || application.status === statusFilter;
+                const matchesSearch = !searchTerm || 
+                    application.first_name.toLowerCase().includes(searchTerm) ||
+                    application.last_name.toLowerCase().includes(searchTerm) ||
+                    application.email.toLowerCase().includes(searchTerm) ||
+                    application.primary_course.toLowerCase().includes(searchTerm) ||
+                    `APP-${application.application_id.toString().padStart(6, '0')}`.includes(searchTerm);
+                
+                return matchesStatus && matchesSearch;
+            });
+
+            currentPage = 1;
+            renderApplications();
+        }
+
+        function renderApplications() {
+            const startIndex = (currentPage - 1) * applicationsPerPage;
+            const paginatedApplications = filteredApplications.slice(startIndex, startIndex + applicationsPerPage);
+
+            let tableHTML = '';
+            
+            if (paginatedApplications.length === 0) {
+                tableHTML = `
+                    <tr>
+                        <td colspan="6" class="px-6 py-4 text-center text-gray-400">
+                            No applications found matching your criteria
+                        </td>
+                    </tr>
+                `;
+            } else {
+                paginatedApplications.forEach(application => {
+                    const appId = `APP-${application.application_id.toString().padStart(6, '0')}`;
+                    const statusClass = `status-${application.status}`;
+                    
+                    tableHTML += `
+                        <tr class="hover:bg-gray-800">
+                            <td class="px-6 py-4 whitespace-nowrap">${appId}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                ${application.first_name} ${application.last_name}
+                                <div class="text-sm text-gray-400">${application.email}</div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div>${application.primary_course}</div>
+                                <div class="text-sm text-gray-400">${application.faculty}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="status-badge ${statusClass}">
+                                    ${application.status.replace('_', ' ').toUpperCase()}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                                ${new Date(application.submission_date).toLocaleDateString()}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <button onclick="viewApplication(${application.application_id})" 
+                                        class="text-yellow-400 hover:text-yellow-300 mr-3">
+                                    View
+                                </button>
+                                <button onclick="updateStatus(${application.application_id})" 
+                                        class="text-blue-400 hover:text-blue-300">
+                                    Update
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            document.getElementById('applicationsTable').innerHTML = tableHTML;
+            
+            // Update pagination info
+            document.getElementById('paginationInfo').textContent = 
+                `Showing ${startIndex + 1}-${Math.min(startIndex + applicationsPerPage, filteredApplications.length)} of ${filteredApplications.length}`;
+            
+            // Update button states
+            document.getElementById('prevPage').disabled = currentPage === 1;
+            document.getElementById('nextPage').disabled = 
+                currentPage * applicationsPerPage >= filteredApplications.length;
+        }
+
+        async function viewApplication(applicationId) {
+            try {
+                const response = await fetch(`/api/application-status/${applicationId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${sessionStorage.getItem('adminToken')}`
+                    }
+                });
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.message || 'Failed to load application');
+                }
+
+                const { application, statusHistory, documents, interview } = data;
+                const appId = `APP-${application.application_id.toString().padStart(6, '0')}`;
+
+                let modalHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <h4 class="text-lg font-medium text-yellow-400 mb-2">Applicant Information</h4>
+                            <div class="space-y-2">
+                                <p><span class="text-gray-400">Name:</span> ${application.first_name} ${application.last_name}</p>
+                                <p><span class="text-gray-400">Email:</span> ${application.email}</p>
+                                <p><span class="text-gray-400">Phone:</span> ${application.phone}</p>
+                                <p><span class="text-gray-400">ID Number:</span> ${application.id_number}</p>
+                                <p><span class="text-gray-400">Address:</span> ${application.address}</p>
+                                <p><span class="text-gray-400">Education:</span> ${application.education_level}</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-medium text-yellow-400 mb-2">Application Details</h4>
+                            <div class="space-y-2">
+                                <p><span class="text-gray-400">Application ID:</span> ${appId}</p>
+                                <p><span class="text-gray-400">Primary Course:</span> ${application.primary_course}</p>
+                                <p><span class="text-gray-400">Secondary Course:</span> ${application.secondary_course}</p>
+                                <p><span class="text-gray-400">Faculty:</span> ${application.faculty}</p>
+                                <p><span class="text-gray-400">Status:</span> 
+                                    <span class="status-badge status-${application.status}">
+                                        ${application.status.replace('_', ' ').toUpperCase()}
+                                    </span>
+                                </p>
+                                <p><span class="text-gray-400">Submitted:</span> ${new Date(application.submission_date).toLocaleString()}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Documents section
+                if (documents && documents.length > 0) {
+                    modalHTML += `
+                        <div class="mb-6">
+                            <h4 class="text-lg font-medium text-yellow-400 mb-2">Submitted Documents</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    `;
+
+                    documents.forEach(doc => {
+                        const icon = doc.file_name.endsWith('.pdf') ? '📄 PDF' : '🖼️ Image';
+                        modalHTML += `
+                            <div class="flex items-center justify-between p-3 bg-gray-800 rounded-lg">
+                                <div>
+                                    <span class="mr-2">${icon}</span>
+                                    <span class="text-sm">${doc.file_name}</span>
+                                </div>
+                                <a href="/api/documents/${doc.document_id}" 
+                                   class="text-yellow-400 hover:underline text-sm"
+                                   download="${doc.file_name}">
+                                    Download
+                                </a>
+                            </div>
+                        `;
+                    });
+
+                    modalHTML += `</div></div>`;
+                }
+
+                // Status history
+                modalHTML += `
+                    <div class="mb-6">
+                        <h4 class="text-lg font-medium text-yellow-400 mb-2">Status History</h4>
+                        <div class="space-y-4">
+                `;
+
+                statusHistory.forEach((status, index) => {
+                    modalHTML += `
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 mt-1">
+                                <div class="h-3 w-3 rounded-full 
+                                    ${status.status === 'accepted' ? 'bg-green-500' : ''}
+                                    ${status.status === 'rejected' ? 'bg-red-500' : ''}
+                                    ${['submitted', 'under_review', 'documents_verified', 'interview_scheduled'].includes(status.status) ? 'bg-blue-500' : ''}">
+                                </div>
+                                ${index < statusHistory.length - 1 ? '<div class="h-8 w-px bg-gray-600 mx-1"></div>' : ''}
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium">
+                                    ${status.status.replace('_', ' ').toUpperCase()}
+                                    <span class="text-gray-400 ml-2">${new Date(status.change_date).toLocaleString()}</span>
+                                </p>
+                                ${status.notes ? `<p class="text-sm text-gray-300 mt-1">${status.notes}</p>` : ''}
+                                <p class="text-xs text-gray-500 mt-1">Changed by: ${status.changed_by}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                modalHTML += `</div></div>`;
+
+                // Interview section
+                if (interview) {
+                    modalHTML += `
+                        <div>
+                            <h4 class="text-lg font-medium text-yellow-400 mb-2">Interview Details</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <p class="text-gray-400">Scheduled Date:</p>
+                                    <p>${new Date(interview.scheduled_date).toLocaleString()}</p>
+                                </div>
+                                ${interview.interviewer ? `
+                                    <div>
+                                        <p class="text-gray-400">Interviewer:</p>
+                                        <p>${interview.interviewer}</p>
+                                    </div>
+                                ` : ''}
+                                ${interview.meeting_link ? `
+                                    <div class="md:col-span-2">
+                                        <p class="text-gray-400">Meeting Link:</p>
+                                        <a href="${interview.meeting_link}" target="_blank" class="text-yellow-400 hover:underline">
+                                            ${interview.meeting_link}
+                                        </a>
+                                    </div>
+                                ` : ''}
+                                ${interview.notes ? `
+                                    <div class="md:col-span-2">
+                                        <p class="text-gray-400">Notes:</p>
+                                        <p class="text-gray-300">${interview.notes}</p>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                document.getElementById('modalTitle').textContent = `Application: ${appId}`;
+                document.getElementById('modalContent').innerHTML = modalHTML;
+                document.getElementById('applicationModal').classList.remove('hidden');
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to load application details: ' + error.message);
+            }
+        }
+
+        function updateStatus(applicationId) {
+            const appId = `APP-${applicationId.toString().padStart(6, '0')}`;
+            const statusOptions = [
+                'submitted', 'under_review', 'documents_verified', 
+                'interview_scheduled', 'accepted', 'rejected'
+            ];
+
+            let modalHTML = `
+                <h4 class="text-lg font-medium text-yellow-400 mb-4">Update Status for ${appId}</h4>
+                <form id="statusForm" class="space-y-4">
+                    <div>
+                        <label for="newStatus" class="block text-sm font-medium text-gray-300 mb-1">New Status</label>
+                        <select id="newStatus" class="w-full bg-gray-800 text-white rounded px-3 py-2" required>
+                            ${statusOptions.map(status => `
+                                <option value="${status}">${status.replace('_', ' ').toUpperCase()}</option>
+                            `).join('')}
+                        </select>
+                    </div>
+                    <div>
+                        <label for="statusNotes" class="block text-sm font-medium text-gray-300 mb-1">Notes</label>
+                        <textarea id="statusNotes" rows="3" class="w-full bg-gray-800 text-white rounded px-3 py-2"></textarea>
+                    </div>
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" onclick="document.getElementById('applicationModal').classList.add('hidden')" 
+                                class="px-4 py-2 bg-gray-700 rounded hover:bg-gray-600">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-yellow-600 rounded hover:bg-yellow-700">
+                            Update Status
+                        </button>
+                    </div>
+                </form>
+            `;
+
+            document.getElementById('modalTitle').textContent = `Update Status: ${appId}`;
+            document.getElementById('modalContent').innerHTML = modalHTML;
+            document.getElementById('applicationModal').classList.remove('hidden');
+
+            document.getElementById('statusForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const status = document.getElementById('newStatus').value;
+                const notes = document.getElementById('statusNotes').value;
+
+                try {
+                    const response = await fetch('/api/admin/update-status', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${sessionStorage.getItem('adminToken')}`
+                        },
+                        body: JSON.stringify({
+                            applicationId,
+                            status,
+                            notes
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (!data.success) {
+                        throw new Error(data.message || 'Failed to update status');
+                    }
+
+                    alert('Status updated successfully');
+                    document.getElementById('applicationModal').classList.add('hidden');
+                    await loadApplications(); // Refresh the list
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Failed to update status: ' + error.message);
+                }
+            });
+        }
+
+        function logout() {
+            sessionStorage.removeItem('isAdmin');
+            sessionStorage.removeItem('adminToken');
+            sessionStorage.removeItem('adminName');
+            window.location.href = 'admin-login.html';
+        }
+    </script>
+</body>
+</html>

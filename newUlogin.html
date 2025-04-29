@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Limkokwing Lesotho</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #0a0a0a;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: #111111;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0px 0px 10px rgba(255, 204, 0, 0.2);
+            width: 100%;
+            max-width: 500px;
+        }
+        h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            background: linear-gradient(to right, #ffcc00, white);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #ffcc00;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #333;
+            color: white;
+            border: 1px solid #444;
+            font-size: 14px;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #ffcc00;
+            color: black;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 20px;
+        }
+        .btn:hover {
+            background-color: #e6b800;
+        }
+        .login-link {
+            color: #ffcc00;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 15px;
+        }
+        .login-link:hover {
+            text-decoration: underline;
+        }
+        .profile-details {
+            background-color: #222;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: left;
+            display: none;
+        }
+        .verification-message {
+            background-color: #222;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Create Your Profile</h2>
+        
+        <form id="signupForm" action="/api/register" method="POST">
+            <div class="form-group">
+                <label for="fullName">Full Name</label>
+                <input type="text" id="fullName" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Create Password</label>
+                <input type="password" id="password" required minlength="8">
+            </div>
+            
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" required minlength="8">
+            </div>
+            
+            <button type="submit" class="btn">Create Profile</button>
+        </form>
+        
+        <!-- Verification Message -->
+        <div id="verificationMessage" class="verification-message">
+            <h3>Verify Your Email</h3>
+            <p>We've sent a verification link to <span id="userEmail" style="color: #ffcc00;"></span></p>
+            <p>Please check your inbox and click the link to activate your account.</p>
+            <p>Didn't receive the email? <a href="#" id="resendLink" style="color: #ffcc00;">Resend verification</a></p>
+        </div>
+        
+        <!-- Profile Details (hidden until email is verified) -->
+        <div id="profileDetails" class="profile-details">
+            <h3>Your Profile Details</h3>
+            <p><strong>Application ID:</strong> <span id="studentId"></span></p>
+            <p><strong>Username:</strong> <span id="username"></span></p>
+            <p><strong>Temporary Password:</strong> <span id="tempPassword"></span></p>
+            <p>Please save these details securely. You'll need them to login.</p>
+            
+            <a href="application.html?course=BSc%20(Hons)%20in%20Business%20IT" class="btn">Continue with Application</a>
+        </div>
+        
+        <p>Already have an account? <a href="newU2login.html" class="login-link">Login here</a></p>
+    </div>
+
+<script>
+   document.getElementById('signupForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = {
+        fullName: document.getElementById('fullName').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        password: document.getElementById('password').value,
+        confirmPassword: document.getElementById('confirmPassword').value
+    };
+
+    if (formData.password !== formData.confirmPassword) {
+        alert("Passwords don't match!");
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/signup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+
+        const data = await response.json();
+        
+        if (response.ok) {
+            // Show success message and hide form
+            document.getElementById('signupForm').style.display = 'none';
+            
+            // Display success message
+            const successHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <h3 style="color: #ffcc00;">Registration Successful!</h3>
+                    <p>Your Application ID: <strong>${data.applicationId}</strong></p>
+                    <p>We've sent your application details to <strong>${formData.email}</strong></p>
+                    <p>You can now proceed with your application.</p>
+                    
+                    <a href="application.html" class="btn" style="display: inline-block; margin-top: 20px;">
+                        Continue with Application
+                    </a>
+                </div>
+            `;
+            
+            document.querySelector('.container').insertAdjacentHTML('beforeend', successHTML);
+        } else {
+            alert(data.message || 'Registration failed');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred during registration');
+    }
+});
+</script>
+</body>
+</html>

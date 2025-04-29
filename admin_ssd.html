@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSD Admin Live Chat - VirtualConnect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #0a0a0a;
+            color: white;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.9);
+            padding: 15px;
+            border-bottom: 1px solid #ffcc00;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .chatbox {
+            height: 500px;
+            overflow-y: auto;
+            background-color: #111111;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #333;
+        }
+
+        .message {
+            padding: 8px 12px;
+            margin-bottom: 12px;
+            max-width: 75%;
+            position: left;
+            word-wrap: break-word;
+            border-radius: 7px;
+            font-size: 0.95rem;
+        }
+
+        .user-message {
+            background-color: #222;
+            color: white;
+            margin-left: auto;
+            border: 1px solid rgba(255, 204, 0, 0.3);
+            border-top-right-radius: 0;
+            text-align: left;
+        }
+
+        .ssd-message {
+            background-color: rgba(255, 204, 0, 0.15);
+            color: white;
+            margin-right: auto;
+            border-left: 2px solid #ffcc00;
+            border-top-left-radius: 0;
+            text-align: right;
+        }
+
+        .message-info {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            margin-bottom: 3px;
+            font-weight: 500;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .chat-input input {
+            flex-grow: 1;
+            padding: 10px 15px;
+            background-color: #111;
+            border: 1px solid #333;
+            border-radius: 20px;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .chat-input button {
+            background-color: #ffcc00;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .chat-input button:hover {
+            background-color: #e6b800;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar flex justify-between items-center px-6">
+        <a href="#" class="text-2xl font-bold">SSD Admin Panel</a>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>SSD Admin Chat</h1>
+            <p>Respond to student queries in real-time</p>
+        </div>
+
+        <div class="chatbox" id="chatbox"></div>
+
+        <div class="chat-input">
+            <input type="text" id="adminInput" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const chatbox = document.getElementById("chatbox");
+        const ws = new WebSocket("ws://localhost:3000/chat");
+
+        ws.onopen = () => {
+            appendSystemMessage("Connected to Student Support System");
+        };
+
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.type === "message") {
+                appendMessage(data.data.sender, data.data.message);
+            }
+        };
+
+        function sendMessage() {
+            const input = document.getElementById("adminInput").value.trim();
+            if (input !== "") {
+                const message = {
+                    type: "message",
+                    sender: "SSD Admin",
+                    message: input
+                };
+                ws.send(JSON.stringify(message));
+                appendMessage("SSD Admin", input);
+                document.getElementById("adminInput").value = "";
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        }
+
+        function appendMessage(sender, message) {
+            const messageDiv = document.createElement("div");
+            messageDiv.className = "message " + (sender === "SSD Admin" ? "ssd-message" : "user-message");
+
+            const infoDiv = document.createElement("div");
+            infoDiv.className = "message-info";
+            infoDiv.textContent = sender;
+
+            const textDiv = document.createElement("div");
+            textDiv.textContent = message;
+
+            messageDiv.appendChild(infoDiv);
+            messageDiv.appendChild(textDiv);
+            chatbox.appendChild(messageDiv);
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+
+        function appendSystemMessage(message) {
+            const systemDiv = document.createElement("div");
+            systemDiv.style.textAlign = "center";
+            systemDiv.style.margin = "10px 0";
+            systemDiv.style.color = "#b0b0b0";
+            systemDiv.style.fontSize = "0.8rem";
+            systemDiv.textContent = message;
+            chatbox.appendChild(systemDiv);
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+    </script>
+</body>
+</html>

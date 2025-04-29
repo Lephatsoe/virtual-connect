@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - Limkokwing Lesotho</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Lesotho-themed colors */
+        :root {
+            --lesotho-blue: #00247D;
+            --lesotho-green: #009A49;
+            --lesotho-red: #CE1126;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            background-color: white;
+            border-top: 5px solid var(--lesotho-blue);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .payment-tab.active {
+            border-bottom: 3px solid var(--lesotho-blue);
+            color: var(--lesotho-blue);
+        }
+        
+        .btn-primary {
+            background-color: var(--lesotho-blue);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #001a5e;
+        }
+        
+        .bank-logo {
+            height: 30px;
+            margin-right: 10px;
+        }
+        
+        .momo-logo {
+            height: 40px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="container rounded-lg p-6 w-full max-w-2xl">
+        <div class="flex items-center mb-6">
+            <img src="https://www.limkokwing.net/images/logo.png" alt="Limkokwing Logo" class="h-12 mr-3">
+            <div>
+                <h1 class="text-xl font-bold text-gray-800">Limkokwing University Lesotho</h1>
+                <p class="text-sm text-gray-600">Application Fee Payment</p>
+            </div>
+        </div>
+        
+        <div class="bg-blue-50 p-4 rounded-lg mb-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-gray-600">Application Fee</p>
+                    <p class="text-2xl font-bold">M200.00</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-gray-600">Application ID</p>
+                    <p class="font-mono font-bold">APP<span id="displayApplicantId">123456</span></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="payment-method mb-6">
+            <div class="payment-tabs flex border-b mb-4">
+                <div class="payment-tab active px-4 py-2" data-tab="card">Card Payment</div>
+                <div class="payment-tab px-4 py-2" data-tab="momo">Mobile Money</div>
+                <div class="payment-tab px-4 py-2" data-tab="bank">Bank Transfer</div>
+            </div>
+            
+            <!-- Card Payment -->
+            <div id="cardPayment" class="payment-content active">
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2">Card Number</label>
+                    <input type="text" id="cardNumber" class="w-full p-3 border rounded-lg" placeholder="1234 5678 9012 3456">
+                    <div class="card-icons flex mt-2">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/2560px-Visa_Inc._logo.svg.png" class="h-6 mr-2">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1280px-Mastercard-logo.svg.png" class="h-6 mr-2">
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-gray-700 mb-2">Expiry Date</label>
+                        <input type="text" id="cardExpiry" class="w-full p-3 border rounded-lg" placeholder="MM/YY">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">CVV</label>
+                        <input type="text" id="cardCvv" class="w-full p-3 border rounded-lg" placeholder="123">
+                    </div>
+                </div>
+                
+                <button id="payWithCard" class="btn-primary w-full py-3 rounded-lg font-bold">
+                    Pay M200.00
+                </button>
+            </div>
+            
+            <!-- Mobile Money -->
+            <div id="momoPayment" class="payment-content">
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2">Select Network</label>
+                    <select id="momoNetwork" class="w-full p-3 border rounded-lg">
+                        <option value="">Select Mobile Network</option>
+                        <option value="vodacom">Vodacom M-Pesa</option>
+                        <option value="ecocash">EcoCash (Lesotho)</option>
+                        <option value="mobicash">MobiCash</option>
+                    </select>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2">Mobile Number</label>
+                    <input type="tel" id="momoNumber" class="w-full p-3 border rounded-lg" placeholder="5XX XXX XXX">
+                </div>
+                
+                <div class="flex items-center mb-4">
+                    <img id="momoLogo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Vodacom_2014_logo.svg/1200px-Vodacom_2014_logo.svg.png" class="momo-logo mr-3">
+                    <p class="text-sm text-gray-600">You'll receive a payment request on your phone</p>
+                </div>
+                
+                <button id="payWithMomo" class="btn-primary w-full py-3 rounded-lg font-bold">
+                    Request Mobile Payment
+                </button>
+            </div>
+            
+            <!-- Bank Transfer -->
+            <div id="bankPayment" class="payment-content">
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2">Select Bank</label>
+                    <select id="bankSelection" class="w-full p-3 border rounded-lg">
+                        <option value="">Select Bank</option>
+                        <option value="standard_bank">Standard Lesotho Bank</option>
+                        <option value="nedbank">Nedbank Lesotho</option>
+                        <option value="first_national_bank">First National Bank Lesotho</option>
+                    </select>
+                </div>
+                
+                <div id="bankDetails" class="bg-gray-50 p-4 rounded-lg hidden">
+                    <h4 class="font-bold mb-2">Bank Transfer Details</h4>
+                    <div class="grid grid-cols-2 gap-2 text-sm">
+                        <div class="text-gray-600">Bank Name:</div>
+                        <div id="bankName"></div>
+                        
+                        <div class="text-gray-600">Account Name:</div>
+                        <div>Limkokwing University</div>
+                        
+                        <div class="text-gray-600">Account Number:</div>
+                        <div id="accountNumber"></div>
+                        
+                        <div class="text-gray-600">Branch Code:</div>
+                        <div id="branchCode"></div>
+                        
+                        <div class="text-gray-600">SWIFT Code:</div>
+                        <div id="swiftCode"></div>
+                        
+                        <div class="text-gray-600">Reference:</div>
+                        <div id="bankReference">APP<span id="bankAppId">123456</span></div>
+                        
+                        <div class="text-gray-600">Amount:</div>
+                        <div>M200.00</div>
+                    </div>
+                </div>
+                
+                <button id="confirmTransfer" class="btn-primary w-full py-3 rounded-lg font-bold mt-4">
+                    I have made the transfer
+                </button>
+            </div>
+        </div>
+        
+        <!-- Receipt Section -->
+        <div id="receiptSection" class="hidden">
+            <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                <div class="flex items-center">
+                    <svg class="h-6 w-6 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <h3 class="text-lg font-bold text-green-800">Payment Successful</h3>
+                </div>
+                <p class="mt-2 text-green-600">Your payment has been processed successfully. A receipt has been sent to your registered email.</p>
+            </div>
+            
+            <div class="border rounded-lg p-4">
+                <h4 class="font-bold mb-2">Payment Details</h4>
+                <div class="grid grid-cols-2 gap-2 text-sm">
+                    <div class="text-gray-600">Transaction ID:</div>
+                    <div id="receiptTxnId"></div>
+                    
+                    <div class="text-gray-600">Payment Method:</div>
+                    <div id="receiptMethod"></div>
+                    
+                    <div class="text-gray-600">Date:</div>
+                    <div id="receiptDate"></div>
+                    
+                    <div class="text-gray-600">Amount:</div>
+                    <div>M200.00</div>
+                </div>
+                
+                <button id="printReceipt" class="w-full py-2 border rounded-lg mt-4 flex items-center justify-center">
+                    <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                    </svg>
+                    Print Receipt
+                </button>
+            </div>
+            
+            <a href="dashboard.html" class="block text-center mt-6 text-blue-600 hover:underline">
+                Return to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Set applicant ID from session
+        const applicantId = sessionStorage.getItem('applicantId');
+        if (applicantId) {
+            document.getElementById('displayApplicantId').textContent = applicantId;
+            document.getElementById('bankAppId').textContent = applicantId;
+        } else {
+            window.location.href = 'login.html';
+        }
+
+        // Mobile money network logos
+        const momoLogos = {
+            vodacom: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Vodacom_2014_logo.svg/1200px-Vodacom_2014_logo.svg.png',
+            ecocash: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/EcoCash_logo.svg/1200px-EcoCash_logo.svg.png',
+            mobicash: 'https://www.mobicash.co.ls/wp-content/uploads/2020/06/mobicash-logo.png'
+        };
+
+        // Bank details for Lesotho banks
+        const lesothoBanks = {
+            standard_bank: {
+                name: 'Standard Lesotho Bank',
+                accountNumber: '9087654321',
+                branchCode: '12345',
+                swiftCode: 'SBZCLSML'
+            },
+            nedbank: {
+                name: 'Nedbank Lesotho',
+                accountNumber: '7123456789',
+                branchCode: '67890',
+                swiftCode: 'NEDCLSML'
+            },
+            first_national_bank: {
+                name: 'First National Bank Lesotho',
+                accountNumber: '6123456789',
+                branchCode: '34567',
+                swiftCode: 'FIRNLSML'
+            }
+        };
+
+        // Tab switching
+        document.querySelectorAll('.payment-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.payment-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                const tabId = this.getAttribute('data-tab');
+                document.querySelectorAll('.payment-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(tabId + 'Payment').classList.add('active');
+            });
+        });
+
+        // Mobile money network selection
+        document.getElementById('momoNetwork').addEventListener('change', function() {
+            const logo = momoLogos[this.value];
+            if (logo) {
+                document.getElementById('momoLogo').src = logo;
+            }
+        });
+
+        // Bank selection
+        document.getElementById('bankSelection').addEventListener('change', function() {
+            const bank = lesothoBanks[this.value];
+            const bankDetails = document.getElementById('bankDetails');
+            
+            if (bank) {
+                document.getElementById('bankName').textContent = bank.name;
+                document.getElementById('accountNumber').textContent = bank.accountNumber;
+                document.getElementById('branchCode').textContent = bank.branchCode;
+                document.getElementById('swiftCode').textContent = bank.swiftCode;
+                bankDetails.classList.remove('hidden');
+            } else {
+                bankDetails.classList.add('hidden');
+            }
+        });
+
+        // Process card payment
+        document.getElementById('payWithCard').addEventListener('click', async function() {
+            const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
+            const cardExpiry = document.getElementById('cardExpiry').value;
+            const cardCvv = document.getElementById('cardCvv').value;
+            
+            // Simple validation
+            if (!cardNumber || cardNumber.length < 16) {
+                alert('Please enter a valid card number');
+                return;
+            }
+            
+            if (!cardExpiry || cardExpiry.length < 5) {
+                alert('Please enter expiry date (MM/YY)');
+                return;
+            }
+            
+            if (!cardCvv || cardCvv.length < 3) {
+                alert('Please enter CVV');
+                return;
+            }
+            
+            this.disabled = true;
+            this.innerHTML = '<span class="loading-spinner"></span> Processing...';
+            
+            try {
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // In a real app, you would call your server endpoint here
+                const response = await fetch('/api/process-payment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        applicantId,
+                        paymentMethod: 'Credit Card',
+                        transactionDetails: {
+                            cardType: detectCardType(cardNumber).name,
+                            lastFourDigits: cardNumber.slice(-4),
+                            expiryDate: cardExpiry
+                        }
+                    }),
+                });
+                
+                const result = await response.json();
+                
+                if (!result.success) {
+                    throw new Error(result.message || 'Payment failed');
+                }
+                
+                // Show receipt
+                showReceipt(result.transactionId, 'Credit Card');
+                
+            } catch (error) {
+                console.error('Payment error:', error);
+                alert('Payment failed: ' + error.message);
+            } finally {
+                this.disabled = false;
+                this.textContent = 'Pay M200.00';
+            }
+        });
+
+        // Process mobile money payment
+        document.getElementById('payWithMomo').addEventListener('click', async function() {
+            const network = document.getElementById('momoNetwork').value;
+            const number = document.getElementById('momoNumber').value;
+            
+            if (!network) {
+                alert('Please select a mobile network');
+                return;
+            }
+            
+            if (!number || number.length < 8) {
+                alert('Please enter a valid mobile number');
+                return;
+            }
+            
+            this.disabled = true;
+            this.innerHTML = '<span class="loading-spinner"></span> Sending request...';
+            
+            try {
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // In a real app, you would call your server endpoint here
+                const response = await fetch('/api/process-payment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        applicantId,
+                        paymentMethod: network === 'vodacom' ? 'Vodacom M-Pesa' : 
+                                        network === 'ecocash' ? 'EcoCash' : 'MobiCash',
+                        transactionDetails: {
+                            network,
+                            phoneNumber: number
+                        }
+                    }),
+                });
+                
+                const result = await response.json();
+                
+                if (!result.success) {
+                    throw new Error(result.message || 'Payment failed');
+                }
+                
+                // Show receipt
+                showReceipt(result.transactionId, 
+                    network === 'vodacom' ? 'Vodacom M-Pesa' : 
+                    network === 'ecocash' ? 'EcoCash' : 'MobiCash');
+                
+            } catch (error) {
+                console.error('Payment error:', error);
+                alert('Payment failed: ' + error.message);
+            } finally {
+                this.disabled = false;
+                this.textContent = 'Request Mobile Payment';
+            }
+        });
+
+        // Confirm bank transfer
+        document.getElementById('confirmTransfer').addEventListener('click', async function() {
+            const bank = document.getElementById('bankSelection').value;
+            
+            if (!bank) {
+                alert('Please select a bank');
+                return;
+            }
+            
+            this.disabled = true;
+            this.innerHTML = '<span class="loading-spinner"></span> Confirming...';
+            
+            try {
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // In a real app, you would call your server endpoint here
+                const response = await fetch('/api/process-payment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        applicantId,
+                        paymentMethod: lesothoBanks[bank].name + ' Transfer',
+                        transactionDetails: {
+                            bankName: lesothoBanks[bank].name,
+                            accountNumber: lesothoBanks[bank].accountNumber,
+                            reference: 'APP' + applicantId
+                        }
+                    }),
+                });
+                
+                const result = await response.json();
+                
+                if (!result.success) {
+                    throw new Error(result.message || 'Payment failed');
+                }
+                
+                // Show receipt
+                showReceipt(result.transactionId, lesothoBanks[bank].name + ' Transfer');
+                
+            } catch (error) {
+                console.error('Payment error:', error);
+                alert('Payment failed: ' + error.message);
+            } finally {
+                this.disabled = false;
+                this.textContent = 'I have made the transfer';
+            }
+        });
+
+        // Show receipt after payment
+        function showReceipt(transactionId, method) {
+            document.getElementById('receiptTxnId').textContent = transactionId;
+            document.getElementById('receiptMethod').textContent = method;
+            document.getElementById('receiptDate').textContent = new Date().toLocaleDateString('en-GB');
+            
+            document.querySelector('.payment-method').classList.add('hidden');
+            document.getElementById('receiptSection').classList.remove('hidden');
+        }
+
+        // Print receipt
+        document.getElementById('printReceipt').addEventListener('click', function() {
+            window.print();
+        });
+
+        // Card type detection (simplified)
+        function detectCardType(cardNumber) {
+            cardNumber = cardNumber.replace(/\s/g, '');
+            
+            if (/^4/.test(cardNumber)) {
+                return { name: 'Visa', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/2560px-Visa_Inc._logo.svg.png' };
+            } else if (/^5[1-5]/.test(cardNumber)) {
+                return { name: 'Mastercard', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1280px-Mastercard-logo.svg.png' };
+            } else if (/^3[47]/.test(cardNumber)) {
+                return { name: 'American Express', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/American_Express_logo.svg/1200px-American_Express_logo.svg.png' };
+            }
+            
+            return { name: 'Card', logo: '' };
+        }
+    </script>
+</body>
+</html>

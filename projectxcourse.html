@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Recommendation - Limkokwing Lesotho</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #0a0a0a;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #111111;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0px 0px 10px rgba(255, 204, 0, 0.2);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            background: linear-gradient(to right, #ffcc00, white);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .grade-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .grade-table th,
+        .grade-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #444;
+        }
+
+        .grade-table th {
+            background-color: #333;
+            color: #ffcc00;
+            font-weight: 600;
+        }
+
+        .grade-table td {
+            background-color: #222;
+        }
+
+        .grade-table select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 5px;
+            background-color: #333;
+            color: white;
+            border: none;
+            font-size: 14px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #ffcc00;
+            color: black;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            background-color: #e6b800;
+        }
+
+        .results {
+            margin-top: 20px;
+            text-align: left;
+            background-color: #222;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .results h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #ffcc00;
+            margin-bottom: 10px;
+        }
+
+        .results table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .results th,
+        .results td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #444;
+        }
+
+        .results th {
+            background-color: #333;
+            color: #ffcc00;
+        }
+
+        .no-courses {
+            color: #ff4444;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+
+        .back-link {
+            color: #ffcc00;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 15px;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .loading {
+            display: none;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #ffcc00;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Add this to your existing styles */
+        .apply-link {
+            color: #ffcc00;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 5px;
+            padding: 5px 10px;
+            border: 1px solid #ffcc00;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        .apply-link:hover {
+            background-color: #ffcc00;
+            color: #111111;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Find Your Course and Enrol with us </h2>
+        <p>Enter your grades to see suitable courses at Limkokwing Lesotho.</p>
+
+        <!-- Grade Input Table -->
+        <table class="grade-table">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Grade</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Mathematics</td>
+                    <td>
+                        <select id="mathGrade" required>
+                            <option value="">Select Grade</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                            <option value="E">E</option>
+                            <option value="F">F</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Science</td>
+                    <td>
+                        <select id="scienceGrade" required>
+                            <option value="">Select Grade</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                            <option value="E">E</option>
+                            <option value="F">F</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>English</td>
+                    <td>
+                        <select id="englishGrade" required>
+                            <option value="">Select Grade</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                            <option value="E">E</option>
+                            <option value="F">F</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ICT</td>
+                    <td>
+                        <select id="ictGrade" required>
+                            <option value="">Select Grade</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                            <option value="E">E</option>
+                            <option value="F">F</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Accounting</td>
+                    <td>
+                        <select id="accountingGrade" required>
+                            <option value="">Select Grade</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                            <option value="E">E</option>
+                            <option value="F">F</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Business Studies</td>
+                    <td>
+                        <select id="businessGrade" required>
+                            <option value="">Select Grade</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                            <option value="E">E</option>
+                            <option value="F">F</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Geography</td>
+                    <td>
+                        <select id="geographyGrade" required>
+                            <option value="">Select Grade</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                            <option value="E">E</option>
+                            <option value="F">F</option>
+                        </select>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <button class="btn" id="recommendBtn">Get Recommendations</button>
+        
+        <!-- Loading indicator -->
+        <div class="loading" id="loadingIndicator">
+            <div class="loading-spinner"></div>
+            <p>Analyzing your grades...</p>
+        </div>
+
+        <!-- Results Section -->
+        <div id="results" class="results">
+            <h3>Recommended Courses:</h3>
+            <div id="recommendedCourses"></div>
+
+            <h3 style="margin-top: 20px;">Other Courses You Qualify For:</h3>
+            <div id="qualifiedCourses"></div>
+
+            <div id="noCoursesMessage" class="no-courses" style="display: none;">
+                <p>Unfortunately, you do not qualify for any courses at Limkokwing Lesotho based on your grades.</p>
+                <p>Please consider improving your grades or exploring alternative pathways.</p>
+            </div>
+        </div>
+
+        <a href="index.html" class="back-link">← Back to Home</a>
+    </div>
+
+    <script>
+        // Courses offered at Limkokwing Lesotho with detailed requirements
+        const courses = [
+            {
+                name: "Degree in Information Technology",
+                faculty: "Faculty of Information and Communication Technology",
+                requirements: {
+                    math: "C",  // Minimum C in Math
+                    ict: "C",   // Minimum C in ICT
+                    english: "C", // Minimum C in English
+                    credits: 5,
+                    preferredSubjects: ["math", "ict"]
+                },
+                description: "For students with 5 credits including A/B/C in Mathematics and C or better in ICT"
+            },
+            {
+                name: "Degree in Business Information Technology",
+                faculty: "Faculty of Information and Communication Technology",
+                requirements: {
+                    math: "D",  // Minimum D in Math
+                    english: "C", // Minimum C in English
+                    credits: 5,
+                    preferredSubjects: ["math", "ict", "accounting"]
+                },
+                description: "For students with 5 credits including D in Mathematics"
+            },
+            {
+                name: "Diploma in Information Technology",
+                faculty: "Faculty of Information and Communication Technology",
+                requirements: {
+                    math: "D",
+                    credits: 5,
+                    preferredSubjects: ["math", "ict"]
+                },
+                description: "For students with 5 credits including D in Mathematics"
+            },
+            {
+                name: "Degree in International Business",
+                faculty: "Faculty of Business and Globalization",
+                requirements: {
+                    math: "C",
+                    english: "C",
+                    credits: 5,
+                    preferredSubjects: ["math", "english", "business", "accounting"]
+                },
+                description: "For business-oriented students with strong math and English"
+            },
+            {
+                name: "Degree in Entrepreneurship",
+                faculty: "Faculty of Business and Globalization",
+                requirements: {
+                    math: "C",
+                    english: "C",
+                    credits: 5,
+                    preferredSubjects: ["business", "accounting"]
+                },
+                description: "For students interested in starting their own business"
+            },
+            {
+                name: "Diploma in Business Management",
+                faculty: "Faculty of Business and Globalization",
+                requirements: {
+                    english: "C",
+                    credits: 5,
+                    preferredSubjects: ["business", "accounting"]
+                },
+                description: "General business studies program"
+            },
+            {
+                name: "Degree in Tourism Management",
+                faculty: "Faculty of Creativity in Tourism and Hospitality",
+                requirements: {
+                    english: "C",
+                    credits: 5,
+                    preferredSubjects: ["geography", "english"]
+                },
+                description: "For students interested in tourism industry"
+            },
+            {
+                name: "Diploma in Graphic Design",
+                faculty: "Faculty of Design Innovation",
+                requirements: {
+                    english: "C",
+                    credits: 5,
+                    preferredSubjects: []
+                },
+                description: "Creative design program"
+            },
+            {
+                name: "Degree in Professional Communication",
+                faculty: "Faculty of Communication, Media, and Broadcasting",
+                requirements: {
+                    english: "B",
+                    credits: 5,
+                    preferredSubjects: ["english"]
+                },
+                description: "For students with strong communication skills"
+            },
+            {
+                name: "Diploma in Event Management",
+                faculty: "Faculty of Creativity in Tourism and Hospitality",
+                requirements: {
+                    english: "D",
+                    credits: 4,
+                    preferredSubjects: []
+                },
+                description: "For students interested in event planning"
+            },
+            {
+                name: "Diploma in Public Relations",
+                faculty: "Faculty of Communication, Media, and Broadcasting",
+                requirements: {
+                    english: "D",
+                    credits: 4,
+                    preferredSubjects: []
+                },
+                description: "For students interested in media and public relations"
+            }
+        ];
+
+        // DOM elements
+        const recommendBtn = document.getElementById("recommendBtn");
+        const resultsDiv = document.getElementById("results");
+        const recommendedCoursesDiv = document.getElementById("recommendedCourses");
+        const qualifiedCoursesDiv = document.getElementById("qualifiedCourses");
+        const noCoursesMessage = document.getElementById("noCoursesMessage");
+        const loadingIndicator = document.getElementById("loadingIndicator");
+
+        // Event listeners
+        recommendBtn.addEventListener("click", suggestCourses);
+        document.addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                suggestCourses();
+            }
+        });
+
+        // Main recommendation function
+        function suggestCourses() {
+            // Get all grade inputs
+            const gradeInputs = document.querySelectorAll('select[required]');
+            let allFieldsFilled = true;
+            
+            // Validate all required fields
+            gradeInputs.forEach(input => {
+                if (!input.value) {
+                    allFieldsFilled = false;
+                    input.style.border = "1px solid #ff4444";
+                } else {
+                    input.style.border = "none";
+                }
+            });
+            
+            if (!allFieldsFilled) {
+                alert("Please select grades for all subjects.");
+                return;
+            }
+            
+            // Show loading indicator
+            loadingIndicator.style.display = "block";
+            resultsDiv.style.display = "none";
+            
+            // Use setTimeout to allow UI to update before heavy processing
+            setTimeout(() => {
+                // Get grades from form
+                const grades = {
+                    math: document.getElementById("mathGrade").value,
+                    science: document.getElementById("scienceGrade").value,
+                    english: document.getElementById("englishGrade").value,
+                    ict: document.getElementById("ictGrade").value,
+                    accounting: document.getElementById("accountingGrade").value,
+                    business: document.getElementById("businessGrade").value,
+                    geography: document.getElementById("geographyGrade").value
+                };
+                
+                // Calculate number of credits (A, B, or C grades)
+                const creditCount = Object.values(grades).filter(
+                    grade => ["A", "B", "C"].includes(grade)
+                ).length;
+                
+                // Analyze courses
+                const { recommended, qualified } = analyzeCourses(grades, creditCount);
+                
+                // Display results
+                displayResults(recommended, qualified);
+                
+                // Hide loading indicator
+                loadingIndicator.style.display = "none";
+            }, 100);
+        }
+        
+        // Analyze which courses the student qualifies for
+        function analyzeCourses(grades, creditCount) {
+            const recommended = [];
+            const qualified = [];
+            
+            // Check all courses
+            courses.forEach(course => {
+                // Check if student meets basic requirements (ignores F grades in non-required subjects)
+                if (meetsRequirements(course, grades, creditCount)) {
+                    // Check if student has preferred subjects
+                    const hasPreferredSubjects = course.requirements.preferredSubjects?.some(
+                        subject => ["A", "B", "C"].includes(grades[subject])
+                    );
+                    
+                    if (hasPreferredSubjects || !course.requirements.preferredSubjects?.length) {
+                        recommended.push(course);
+                    } else {
+                        qualified.push(course);
+                    }
+                }
+            });
+            
+            return { recommended, qualified };
+        }
+        
+        // Helper function to check if requirements are met
+        function meetsRequirements(course, grades, creditCount = 0) {
+            // Check credit requirement
+            if (creditCount < (course.requirements.credits || 5)) {
+                return false;
+            }
+            
+            // Check only the explicitly required subjects
+            for (const [subject, minGrade] of Object.entries(course.requirements)) {
+                if (subject !== "credits" && subject !== "preferredSubjects") {
+                    // Skip if the subject isn't in our grades list (like for courses that don't require math)
+                    if (!grades.hasOwnProperty(subject)) continue;
+                    
+                    // Only check if the student has a grade (not F) in required subjects
+                    if (grades[subject] === "F") {
+                        return false;
+                    }
+                    
+                    // Check if the grade meets the minimum requirement
+                    if (!isGradeSufficient(grades[subject], minGrade)) {
+                        return false;
+                    }
+                }
+            }
+            
+            return true;
+        }
+        
+        // Helper function to compare grades
+        function isGradeSufficient(studentGrade, requiredGrade) {
+            const gradeOrder = ["A", "B", "C", "D", "E", "F"];
+            return gradeOrder.indexOf(studentGrade) <= gradeOrder.indexOf(requiredGrade);
+        }
+        
+        // Display results in the UI
+        function displayResults(recommended, qualified) {
+            // Clear previous results
+            recommendedCoursesDiv.innerHTML = "";
+            qualifiedCoursesDiv.innerHTML = "";
+            noCoursesMessage.style.display = "none";
+            
+            // Display recommended courses if any
+            if (recommended.length > 0) {
+                let html = '<table><thead><tr><th>Faculty</th><th>Course</th><th>Description</th><th>Action</th></tr></thead><tbody>';
+                
+                recommended.forEach(course => {
+                    html += `
+                        <tr>
+                            <td>${course.faculty}</td>
+                            <td><strong>${course.name}</strong></td>
+                            <td>${course.description || 'Meets all requirements'}</td>
+                            <td><a href="newUlogin.html?course=${encodeURIComponent(course.name)}" class="apply-link">Apply Now</a></td>
+                        </tr>
+                    `;
+                });
+                
+                html += '</tbody></table>';
+                recommendedCoursesDiv.innerHTML = html;
+            } else {
+                recommendedCoursesDiv.innerHTML = '<p>No specifically recommended courses based on your strongest subjects.</p>';
+            }
+            
+            // Display other qualified courses if any
+            if (qualified.length > 0) {
+                let html = '<table><thead><tr><th>Faculty</th><th>Course</th><th>Description</th><th>Action</th></tr></thead><tbody>';
+                
+                qualified.forEach(course => {
+                    html += `
+                        <tr>
+                            <td>${course.faculty}</td>
+                            <td>${course.name}</td>
+                            <td>${course.description || 'Meets basic requirements'}</td>
+                            <td><a href="newUlogin.html?course=${encodeURIComponent(course.name)}" class="apply-link">Apply Now</a></td>
+                        </tr>
+                    `;
+                });
+                
+                html += '</tbody></table>';
+                qualifiedCoursesDiv.innerHTML = html;
+            }
+            
+            // Show no courses message if no courses at all
+            if (recommended.length === 0 && qualified.length === 0) {
+                noCoursesMessage.style.display = "block";
+            }
+            
+            // Show results section
+            resultsDiv.style.display = "block";
+            
+            // Scroll to results
+            resultsDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Confirmation - Limkokwing Lesotho</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #0a0a0a;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: #111111;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0px 0px 10px rgba(255, 204, 0, 0.2);
+            width: 100%;
+            max-width: 800px;
+        }
+        h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            background: linear-gradient(to right, #ffcc00, white);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+        .success-icon {
+            font-size: 80px;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+        .btn {
+            padding: 12px 24px;
+            background-color: #ffcc00;
+            color: black;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 20px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover {
+            background-color: #e6b800;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success-icon">✓</div>
+        <h2>Application Submitted Successfully!</h2>
+        
+        <div id="confirmationDetails" style="text-align: left; margin-bottom: 30px;">
+            <p>Transaction ID: <strong style="color: #ffcc00;" id="confAppId"></strong></p>
+            <p>Payment of <strong style="color: #ffcc00;">M200.00</strong> received</p>
+            <p>A confirmation email with your Transaction slip has been sent to: <strong style="color: #ffcc00;" id="confEmail"></strong></p>
+        </div>
+        
+        <a href="projectx1.html" class="btn">Return to Home</a>
+    </div>
+
+    <script>
+        // Get application ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const applicationId = urlParams.get('applicationId');
+        
+        // Get the stored application data
+        const applicationData = JSON.parse(sessionStorage.getItem('currentApplication'));
+        
+        // Display confirmation details
+        document.getElementById('confAppId').textContent = applicationId;
+        document.getElementById('confEmail').textContent = applicationData.email;
+        
+        // Clear the stored application data
+        sessionStorage.removeItem('currentApplication');
+    </script>
+</body>
+</html>

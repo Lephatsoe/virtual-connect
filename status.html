@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Status - Limkokwing Lesotho</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #0a0a0a;
+            color: white;
+        }
+        .status-card {
+            background-color: #111111;
+            border-left: 4px solid;
+        }
+        .status-submitted { border-color: #3b82f6; }
+        .status-under_review { border-color: #f59e0b; }
+        .status-documents_verified { border-color: #10b981; }
+        .status-interview_scheduled { border-color: #8b5cf6; }
+        .status-accepted { border-color: #10b981; }
+        .status-rejected { border-color: #ef4444; }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-white bg-clip-text text-transparent">
+                Application Status
+            </h1>
+            <a href="dashboard.html" class="text-yellow-400 hover:underline">← Back to Dashboard</a>
+        </div>
+
+        <div id="statusContainer" class="space-y-6">
+            <!-- Status will be loaded here -->
+            <div class="text-center py-12">
+                <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-400 mx-auto"></div>
+                <p class="mt-4">Loading application status...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const applicationId = sessionStorage.getItem('currentApplicationId');
+            if (!applicationId) {
+                window.location.href = 'dashboard.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/application-status/${applicationId}`);
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.message || 'Failed to load status');
+                }
+
+                renderStatusPage(data);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('statusContainer').innerHTML = `
+                    <div class="bg-red-900/50 border border-red-700 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-red-300">Error Loading Status</h3>
+                        <p class="mt-2">${error.message}</p>
+                        <button onclick="window.location.href='dashboard.html'" 
+                                class="mt-4 px-4 py-2 bg-yellow-500 text-black rounded hover:bg-yellow-600">
+                            Back to Dashboard
+                        </button>
+                    </div>
+                `;
+            }
+        });
+
+        function renderStatusPage(data) {
+            const { application, statusHistory, documents, interview } = data;
+            const statusClass = `status-${application.status}`;
+
+            let statusHTML = `
+                <div class="status-card ${statusClass} rounded-lg p-6 mb-8 shadow-lg">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h2 class="text-xl font-semibold">${application.primary_course}</h2>
+                            <p class="text-gray-400">Application ID: APP-${application.application_id.toString().padStart(6, '0')}</p>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-sm font-medium 
+                            ${application.status === 'accepted' ? 'bg-green-900 text-green-200' : ''}
+                            ${application.status === 'rejected' ? 'bg-red-900 text-red-200' : ''}
+                            ${['submitted', 'under_review', 'documents_verified', 'interview_scheduled'].includes(application.status) ? 'bg-blue-900 text-blue-200' : ''}">
+                            ${application.status.replace('_', ' ').toUpperCase()}
+                        </span>
+                    </div>
+                    
+                    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="font-medium text-yellow-400 mb-2">Application Details</h3>
+                            <ul class="space-y-1">
+                                <li><span class="text-gray-400">Name:</span> ${application.first_name} ${application.last_name}</li>
+                                <li><span class="text-gray-400">Email:</span> ${application.email}</li>
+                                <li><span class="text-gray-400">Phone:</span> ${application.phone}</li>
+                                <li><span class="text-gray-400">Applied:</span> ${new Date(application.submission_date).toLocaleDateString()}</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-yellow-400 mb-2">Program Information</h3>
+                            <ul class="space-y-1">
+                                <li><span class="text-gray-400">Primary Option:</span> ${application.primary_course}</li>
+                                <li><span class="text-gray-400">Secondary Option:</span> ${application.secondary_course}</li>
+                                <li><span class="text-gray-400">Faculty:</span> ${application.faculty}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Status timeline
+            statusHTML += `
+                <div class="bg-gray-900 rounded-lg p-6 mb-8">
+                    <h3 class="font-medium text-yellow-400 mb-4">Status History</h3>
+                    <div class="space-y-4">
+            `;
+
+            statusHistory.forEach((status, index) => {
+                statusHTML += `
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 mt-1">
+                            <div class="h-3 w-3 rounded-full 
+                                ${status.status === 'accepted' ? 'bg-green-500' : ''}
+                                ${status.status === 'rejected' ? 'bg-red-500' : ''}
+                                ${['submitted', 'under_review', 'documents_verified', 'interview_scheduled'].includes(status.status) ? 'bg-blue-500' : ''}">
+                            </div>
+                            ${index < statusHistory.length - 1 ? '<div class="h-8 w-px bg-gray-600 mx-1"></div>' : ''}
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium">
+                                ${status.status.replace('_', ' ').toUpperCase()}
+                                <span class="text-gray-400 ml-2">${new Date(status.change_date).toLocaleString()}</span>
+                            </p>
+                            ${status.notes ? `<p class="text-sm text-gray-300 mt-1">${status.notes}</p>` : ''}
+                            <p class="text-xs text-gray-500 mt-1">Changed by: ${status.changed_by}</p>
+                        </div>
+                    </div>
+                `;
+            });
+
+            statusHTML += `</div></div>`;
+
+            // Documents section
+            if (documents && documents.length > 0) {
+                statusHTML += `
+                    <div class="bg-gray-900 rounded-lg p-6 mb-8">
+                        <h3 class="font-medium text-yellow-400 mb-4">Submitted Documents</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                `;
+
+                documents.forEach(doc => {
+                    const icon = doc.file_name.endsWith('.pdf') ? '📄' : '🖼️';
+                    statusHTML += `
+                        <div class="flex items-center justify-between p-3 bg-gray-800 rounded-lg">
+                            <div>
+                                <span class="mr-2">${icon}</span>
+                                <span class="text-sm">${doc.file_name}</span>
+                            </div>
+                            <a href="/api/documents/${doc.document_id}" 
+                               class="text-yellow-400 hover:underline text-sm"
+                               download="${doc.file_name}">
+                                Download
+                            </a>
+                        </div>
+                    `;
+                });
+
+                statusHTML += `</div></div>`;
+            }
+
+            // Interview section
+            if (interview) {
+                statusHTML += `
+                    <div class="bg-gray-900 rounded-lg p-6">
+                        <h3 class="font-medium text-yellow-400 mb-4">Interview Details</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <p class="text-gray-400">Scheduled Date:</p>
+                                <p>${new Date(interview.scheduled_date).toLocaleString()}</p>
+                            </div>
+                            ${interview.interviewer ? `
+                                <div>
+                                    <p class="text-gray-400">Interviewer:</p>
+                                    <p>${interview.interviewer}</p>
+                                </div>
+                            ` : ''}
+                            ${interview.meeting_link ? `
+                                <div class="md:col-span-2">
+                                    <p class="text-gray-400">Meeting Link:</p>
+                                    <a href="${interview.meeting_link}" target="_blank" class="text-yellow-400 hover:underline">
+                                        ${interview.meeting_link}
+                                    </a>
+                                </div>
+                            ` : ''}
+                            ${interview.notes ? `
+                                <div class="md:col-span-2">
+                                    <p class="text-gray-400">Notes:</p>
+                                    <p class="text-gray-300">${interview.notes}</p>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+
+            document.getElementById('statusContainer').innerHTML = statusHTML;
+        }
+    </script>
+</body>
+</html>

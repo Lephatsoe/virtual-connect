@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Form - Limkokwing Lesotho</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #0a0a0a;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: #111111;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0px 0px 10px rgba(255, 204, 0, 0.2);
+            width: 100%;
+            max-width: 800px;
+        }
+        h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            background: linear-gradient(to right, #ffcc00, white);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #ffcc00;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #333;
+            color: white;
+            border: 1px solid #444;
+            font-size: 14px;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #ffcc00;
+            color: black;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 20px;
+        }
+        .btn:hover {
+            background-color: #e6b800;
+        }
+        .back-link {
+            color: #ffcc00;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 15px;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .course-info {
+            background-color: #222;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .required-field::after {
+            content: " *";
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Application Form</h2>
+        
+        <div id="courseDisplay" class="course-info">
+            <!-- Course information will be displayed here -->
+        </div>
+        
+        <form id="applicationForm">
+            <input type="hidden" id="selectedCourse">
+            <input type="hidden" id="selectedFaculty">
+            
+            <div class="form-group">
+                <label for="firstName" class="required-field">First Name</label>
+                <input type="text" id="firstName" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="lastName" class="required-field">Last Name</label>
+                <input type="text" id="lastName" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email" class="required-field">Email Address</label>
+                <input type="email" id="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone" class="required-field">Phone Number</label>
+                <input type="tel" id="phone" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="idNumber" class="required-field">ID/Passport Number</label>
+                <input type="text" id="idNumber" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="address" class="required-field">Physical Address</label>
+                <textarea id="address" rows="3" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="education" class="required-field">Highest Education Level</label>
+                <select id="education" required>
+                    <option value="">Select Education Level</option>
+                    <option value="LGCSE">LGCSE</option>
+                    <option value="AS Level">AS Level</option>
+                    <option value="A Level">A Level</option>
+                    <option value="Diploma">Diploma</option>
+                    <option value="Degree">Degree</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+       
+            
+            <div class="form-group">
+                <label for="documents">Upload Documents (PDF or Image)</label>
+                <input type="file" id="documents" multiple accept=".pdf,.jpg,.jpeg,.png">
+                <small style="color: #888;">(Certificates, transcripts, ID copy, etc.)</small>
+            </div>
+            
+            <button type="submit" class="btn">Submit Application</button>
+        </form>
+        
+        <a href="projectx1.html" class="back-link">← Back to Home</a>
+    </div>
+
+    <script>
+      document.getElementById('applicationForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    // Get the logged in applicant ID from session
+    const applicantId = sessionStorage.getItem('applicantId');
+    if (!applicantId) {
+        alert('Please login before submitting an application');
+        window.location.href = 'newU2login.html';
+        return;
+    }
+
+    // Create FormData object to handle file uploads
+    const formData = new FormData();
+    formData.append('applicantId', applicantId);
+    formData.append('firstName', document.getElementById('firstName').value);
+    formData.append('lastName', document.getElementById('lastName').value);
+    formData.append('email', document.getElementById('email').value);
+    formData.append('phone', document.getElementById('phone').value);
+    formData.append('idNumber', document.getElementById('idNumber').value);
+    formData.append('address', document.getElementById('address').value);
+    formData.append('education', document.getElementById('education').value);
+    formData.append('primaryCourse', document.getElementById('selectedCourse').value);
+    formData.append('secondaryCourse', document.getElementById('secondOption').value);
+    formData.append('faculty', document.getElementById('selectedFaculty').value);
+
+    // Add files to FormData
+    const files = document.getElementById('documents').files;
+    for (let i = 0; i < files.length; i++) {
+        formData.append('documents', files[i]);
+    }
+
+    try {
+        const response = await fetch('/api/submit-application', {
+            method: 'POST',
+            body: formData
+            // Don't set Content-Type header - let the browser set it with boundary
+        });
+
+        const data = await response.json();
+        
+        if (response.ok) {
+            // Store application ID in session
+            sessionStorage.setItem('currentApplicationId', data.applicationId);
+            
+            // Redirect to confirmation page
+            window.location.href = 'confirmation.html';
+        } else {
+            alert(data.message || 'Application submission failed');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred during submission');
+    }
+});
+    </script>
+</body>
+</html> 

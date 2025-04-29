@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Limkokwing VirtualConnect</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+        margin: 0;
+    padding: 0;
+    background: url(limkokwingimage.jpg) no-repeat center center fixed;
+    background-size: cover;
+    font-family: 'Poppins', sans-serif;
+    
+    color: white;
+    }
+    .hero {
+      background: linear-gradient(to right, #000000, #000000), url('images1.png') no-repeat center center;
+      background-size: cover;
+      height: 90vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+    }
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: 600;
+      background: linear-gradient(to right, #ffcc00, white);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .btn:hover {
+      background-color: #e6b800;
+    }
+    .section-title {
+      font-size: 2rem;
+      font-weight: 600;
+      color: #ffcc00;
+      margin-bottom: 20px;
+    }
+    .list-item {
+      margin-bottom: 10px;
+      color: #ccc;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar bg-black bg-opacity-90 p-4 flex justify-between items-center px-6">
+  <a href="#" class="text-2xl font-bold text-white">Limkokwing VirtualConnect</a>
+  <div class="space-x-6">
+    <a href="projectxcourse.html" class="hover:text-yellow-400">Course Recommendation</a>
+    <a href="login.html" class="hover:text-yellow-400">Student Support Department</a>
+    <a href="about.html" class="hover:text-yellow-400">About Us</a>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<!-- Hero Section -->
+<div class="hero">
+    <div>
+        <h1>Welcome to Limkokwing VirtualConnect</h1>
+        <p>Empowering Students with Digital Innovation</p>
+        <a href="explorecourses.html" class="btn mt-6 inline-block">explore Courses</a>
+    </div>
+</div>
+
+<!-- Background Image Section -->
+<div class="relative w-full h-[60vh] bg-cover bg-center" style="background-image: url('images/campus.jpg');">
+    <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="text-center px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-white">Discover Our Campus</h2>
+            <p class="text-white text-lg mt-2 max-w-xl mx-auto">
+                Experience creativity, culture, and innovation at Limkokwing University Lesotho.
+            </p>
+        </div>
+    </div>
+</div>
+
+</section>
+
+<!-- Enrolment Info Section -->
+<section class="section px-4 py-10 bg-[#111] text-center">
+  <h2 class="section-title">How to Apply</h2>
+  <p class="text-gray-300 max-w-2xl mx-auto mb-6">
+    Begin your academic journey at Limkokwing University Lesotho by following these easy steps:
+  </p>
+  <div class="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto text-left">
+    <div>
+      <h3 class="text-lg font-semibold text-white mb-2">📋 Minimum Requirements</h3>
+      <ul class="list-disc list-inside text-gray-300">
+        <li class="list-item">At least 5 LGCSE or equivalent passes including English</li>
+        <li class="list-item">Diploma or Degree holders applying for advanced programs must provide certified transcripts</li>
+        <li class="list-item">Mature entry applicants must provide proof of work experience</li>
+      </ul>
+    </div>
+    <div>
+      <h3 class="text-lg font-semibold text-white mb-2">📎 Required Documents</h3>
+      <ul class="list-disc list-inside text-gray-300">
+        <li class="list-item">Certified copies of academic certificates and transcripts</li>
+        <li class="list-item">Copy of national ID or Passport</li>
+        <li class="list-item">Two passport-size photos</li>
+        <li class="list-item">Completed application form</li>
+        <li class="list-item">Proof of payment for application fee (if applicable)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="mt-8">
+    <a href="projectxcourse.html" class="btn bg-yellow-400 text-black px-8 py-3 font-semibold rounded hover:bg-yellow-300 transition">Start Application</a>
+
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer bg-black text-center p-4 text-sm text-gray-500">
+  <p>© 2025 Limkokwing University Lesotho. All rights reserved.</p>
+</footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const adminPortalBtn = document.getElementById('admin-portal-btn');
+    if (adminPortalBtn) {
+      adminPortalBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (sessionStorage.getItem('adminVerified') === 'true') {
+          window.location.href = 'admin_ssd.html';
+        } else {
+          window.location.href = 'loginadmin.html';
+        }
+      });
+    }
+  });
+</script>
+
+</body>
+</html>
